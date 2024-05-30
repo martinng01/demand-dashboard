@@ -10,7 +10,6 @@ import { historicalDataRepo } from '../repos/historicalDataRepo';
 import { projectedDataRepo } from '../repos/projectedDataRepo';
 import { processCsvAndStoreData } from '../utils/csvProcessor';
 import '../app/globals.css';
-import { split } from 'postcss/lib/list';
 
 export default function HistoricalDataChart() {
   const [histData, setHistData] = useState<HistoricalData[]>([]);
@@ -21,12 +20,18 @@ export default function HistoricalDataChart() {
   var splitDate = new Date(2024, 1);
 
   useEffect(() => {
-    return historicalDataRepo
+    const a = historicalDataRepo
       .liveQuery({
         limit: 1,
         orderBy: { createdAt: 'desc' },
       })
       .subscribe((info) => setHistData(info.applyChanges));
+    const b = projectedDataRepo
+      .liveQuery({
+        limit: 1,
+        orderBy: { createdAt: 'desc' },
+      })
+      .subscribe((info) => setProjectedData(info.applyChanges));
   }, []);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,7 +70,9 @@ export default function HistoricalDataChart() {
       try {
         const response = await axios.post(
           'https://8h09twey46.execute-api.ap-southeast-1.amazonaws.com/dev',
-          { data: { "date" : projectedDate } },
+          { 
+            "date" : projectedDate 
+          },
           {
             headers: {
               'Content-Type': 'application/json',
