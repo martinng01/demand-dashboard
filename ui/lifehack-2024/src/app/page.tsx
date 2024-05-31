@@ -1,10 +1,12 @@
 // src/app/page.tsx
-import HistoricalDataChart from '../components/demandForecasting'
+import DemandForecasting from '../components/demandForecasting';
+import InventoryManagement from '../components/inventoryManagement';
 
 export default function Home() {
   return (
-  <div>
-    <HistoricalDataChart />
-  </div>
+    <div>
+      <DemandForecasting />
+      <InventoryManagement />
+    </div>
   )
 }

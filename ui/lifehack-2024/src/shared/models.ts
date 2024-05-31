@@ -29,3 +29,18 @@ export class ProjectedData {
     @Fields.createdAt()
     createdAt?: Date
 }
+
+@Entity('projectedDemand', {
+    allowApiCrud: true,
+})
+
+export class ProjectedDemand {
+    @Fields.cuid()
+    id = ''
+
+    @Fields.number()
+    projection!: number;
+
+    @Fields.createdAt()
+    createdAt?: Date
+}

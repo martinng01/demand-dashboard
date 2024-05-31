@@ -9,10 +9,11 @@ import { HistoricalData } from '../shared/models';
 import { ProjectedData } from '../shared/models';
 import { historicalDataRepo } from '../repos/historicalDataRepo';
 import { projectedDataRepo } from '../repos/projectedDataRepo';
+import { projectedDemandRepo } from '../repos/projectedDemandRepo';
 import { processCsvAndStoreData } from '../utils/csvProcessor';
 import '../app/globals.css';
 
-export default function HistoricalDataChart() {
+export default function DemandForecasting() {
   const [histData, setHistData] = useState<HistoricalData[]>([]);
   const [projectedData, setProjectedData] = useState<ProjectedData[]>([]);
   const [file, setFile] = useState<File | null>(null);
@@ -54,7 +55,7 @@ export default function HistoricalDataChart() {
       reader.onload = async (e) => {
         const text = e.target?.result;
         if (typeof text === 'string') {
-          await uploadFileAndWaitForProcessing(file);
+          // await uploadFileAndWaitForProcessing(file);
           fetchProjectedData();
           await processCsvAndStoreData(text);
           setLoading(false); // Set loading to false once processing is done
@@ -108,6 +109,10 @@ export default function HistoricalDataChart() {
 
         const responseData = response.data;
         const projectedDemand = responseData.prediction;
+        if (i === 1) {
+          await projectedDemandRepo.insert({ projection: projectedDemand });
+        }
+
         months.push(format(projectedMonth, 'yyyy-MM'));
         demands.push(projectedDemand);
       } catch (error) {

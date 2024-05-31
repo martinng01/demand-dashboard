@@ -1,8 +1,8 @@
 import { remultNextApp } from 'remult/remult-next';
-import { HistoricalData, ProjectedData } from './shared/models';
+import { HistoricalData, ProjectedData, ProjectedDemand } from './shared/models';
 
 export const api = remultNextApp({
-  entities: [HistoricalData, ProjectedData],
+  entities: [HistoricalData, ProjectedData, ProjectedDemand],
   admin: true,
 });
 
