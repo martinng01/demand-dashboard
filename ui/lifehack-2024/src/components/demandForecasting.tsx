@@ -140,7 +140,7 @@ export default function DemandForecasting() {
     const currentDate = new Date(lastYear, lastMonth);
     splitDate = currentDate;
 
-    const previousMonths = 24;
+    const previousMonths = 12;
     const startDate = addMonths(currentDate, -previousMonths);
 
     histData[0].data.month.forEach((month, index) => {
