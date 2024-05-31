@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Chart } from 'react-google-charts';
-import { addMonths, format } from 'date-fns'; // Import functions from date-fns
+import { addMonths, format } from 'date-fns';
+import { useS3Upload } from 'next-s3-upload';
 import axios from 'axios';
 import { HistoricalData } from '../shared/models';
 import { ProjectedData } from '../shared/models';
@@ -15,7 +16,9 @@ export default function HistoricalDataChart() {
   const [histData, setHistData] = useState<HistoricalData[]>([]);
   const [projectedData, setProjectedData] = useState<ProjectedData[]>([]);
   const [file, setFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
+  const [isRetraining, setIsRetraining] = useState(false);
+  const { FileInput, openFileDialog, uploadToS3 } = useS3Upload();
   const projectedMonths = 6;
   var splitDate = new Date(2024, 1);
 
@@ -51,6 +54,7 @@ export default function HistoricalDataChart() {
       reader.onload = async (e) => {
         const text = e.target?.result;
         if (typeof text === 'string') {
+          await uploadFileAndWaitForProcessing(file);
           fetchProjectedData();
           await processCsvAndStoreData(text);
           setLoading(false); // Set loading to false once processing is done
@@ -60,18 +64,40 @@ export default function HistoricalDataChart() {
     }
   };
 
+  const uploadFileAndWaitForProcessing = async (file: File) => {
+    setIsRetraining(true);
+    await uploadToS3(file);
+
+    for (let i = 0; i < 360; i++) {
+      console.log('Waiting for reply...');
+      await delay(1000);
+      const response = await axios.get(
+        'https://8h09twey46.execute-api.ap-southeast-1.amazonaws.com/dev'
+      );
+      const responseData = response.data;
+      if (
+        responseData.sfnStatus === 'SUCCEEDED' &&
+        responseData.endpointStatus === 'InService'
+      ) {
+        console.log(responseData);
+        break;
+      }
+    }
+    setIsRetraining(false);
+  };
+
   const fetchProjectedData = async () => {
-    const months : string[] = [];
-    const demands : number[] = [];
+    const months: string[] = [];
+    const demands: number[] = [];
     for (let i = 1; i <= projectedMonths; i++) {
       const projectedMonth = addMonths(splitDate, i);
       const projectedDate = format(projectedMonth, 'yyyy-MM') + '-01';
-      console.log(projectedDate)
+      console.log(projectedDate);
       try {
         const response = await axios.post(
           'https://8h09twey46.execute-api.ap-southeast-1.amazonaws.com/dev',
-          { 
-            "date" : projectedDate 
+          {
+            date: projectedDate,
           },
           {
             headers: {
@@ -79,14 +105,16 @@ export default function HistoricalDataChart() {
             },
           }
         );
-  
+
         const responseData = response.data;
         const projectedDemand = responseData.prediction;
         months.push(format(projectedMonth, 'yyyy-MM'));
         demands.push(projectedDemand);
-  
       } catch (error) {
-        console.error('Error fetching projected demand:', (error as Error).message);
+        console.error(
+          'Error fetching projected demand:',
+          (error as Error).message
+        );
       }
     }
     await projectedDataRepo.insert({
@@ -114,20 +142,12 @@ export default function HistoricalDataChart() {
       if (month < format(startDate, 'yyyy-MM')) {
         return;
       }
-      chartData.push([
-        month,
-        histData[0].data.demand[index],
-        0,
-      ]);
+      chartData.push([month, histData[0].data.demand[index], 0]);
     });
 
     if (projectedData.length) {
       projectedData[0].data.month.forEach((month, index) => {
-        chartData.push([
-          month,
-          0,
-          projectedData[0].data.demand[index],
-        ]);
+        chartData.push([month, 0, projectedData[0].data.demand[index]]);
       });
     }
     // const startYear = parseInt((chartData[1][0] as string).slice(0, 4));
@@ -190,7 +210,14 @@ export default function HistoricalDataChart() {
         >
           Submit
         </button>
-        {loading && <div className="spinner"></div>} {/* Loading spinner */}
+        {loading && (
+          <div>
+            <div className="spinner"></div>
+            {isRetraining && (
+              <div className="retraining-text">Retraining</div>
+            )}{' '}
+          </div>
+        )}
       </div>
     </div>
   );
