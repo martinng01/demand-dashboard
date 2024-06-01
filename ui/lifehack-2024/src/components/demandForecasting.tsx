@@ -164,7 +164,7 @@ export default function DemandForecasting() {
   }
 
   const options = {
-    title: 'Demand Forecasting',
+    title: 'Forecasted Demand',
     titleTextStyle: {
       fontSize: 24,
       bold: true,
@@ -176,7 +176,16 @@ export default function DemandForecasting() {
       title: 'Month',
       format: 'yyyy-MM',
     },
-    vAxis: { title: 'Demand' },
+    vAxis: {
+      title: 'Demand',
+      titleTextStyle: {
+        fontSize: 16,
+        color: '#000',
+      },
+      textStyle: {
+        fontSize: 12,
+      },
+    },
     legend: { position: 'bottom', alignment: 'center' }, // Adjust legend position and alignment
     bar: { groupWidth: '80%' },
     series: {
@@ -201,7 +210,8 @@ export default function DemandForecasting() {
           />
         </div>
       )}
-      <div className="input-container">
+      <h1 className="text-base font-semibold pt-2 px-5">Upload CSV File</h1>
+      <div className="flexitems-center px-5">
         <input
           type="file"
           accept=".csv"

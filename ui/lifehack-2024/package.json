@@ -10,8 +10,11 @@
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.6",
+    "@googlemaps/routeoptimization": "^0.1.0",
     "axios": "^1.7.2",
     "date-fns": "^3.6.0",
+    "fs": "^0.0.1-security",
+    "net": "^1.0.2",
     "next": "^14.2.3",
     "next-s3-upload": "^0.3.4",
     "papaparse": "^5.4.1",

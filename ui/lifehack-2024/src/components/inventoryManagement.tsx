@@ -37,9 +37,8 @@ export default function InventoryManagement() {
 
   return (
     <div className="inventory-management">
-      <h2 className="header">Inventory Management</h2>
       <div className="input-group">
-        <div className="input-item">
+        <div className="input-item bg-white shadow-lg">
           <label>Current Stock: </label>
           <input
             type="number"
@@ -47,11 +46,11 @@ export default function InventoryManagement() {
             onChange={(e) => setCurrentStock(parseInt(e.target.value))}
           />
         </div>
-        <div className="input-item">
+        <div className="input-item bg-white shadow-lg">
           <label>Next Month Demand: </label>
           <input type="number" value={nextMonthDemand.toFixed(2)} readOnly />
         </div>
-        <div className="input-item">
+        <div className="input-item bg-white shadow-lg">
           <label>Order Cost: </label>
           <input
             type="number"
@@ -59,7 +58,7 @@ export default function InventoryManagement() {
             onChange={(e) => setOrderCost(parseFloat(e.target.value))}
           />
         </div>
-        <div className="input-item">
+        <div className="input-item bg-white shadow-lg">
           <label>Holding Cost per Unit per Month: </label>
           <input
             type="number"
@@ -67,7 +66,7 @@ export default function InventoryManagement() {
             onChange={(e) => setHoldingCost(parseFloat(e.target.value))}
           />
         </div>
-        <div className="input-item">
+        <div className="input-item bg-white shadow-lg">
           <label>Amount to Order at Next Purchase: </label>
           <input type="number" value={Math.ceil(eoq)} readOnly />
         </div>
