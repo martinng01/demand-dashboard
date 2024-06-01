@@ -5,6 +5,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 
 export default function Map() {
   const mapRef = useRef<HTMLDivElement>(null);
+  const placeAutocompleteRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const initializeMap = async () => {
@@ -32,13 +33,13 @@ export default function Map() {
         position: locationInMap,
       });
 
-      const { SearchBox } = await loader.importLibrary('places');
+      const { SearchBox, Autocomplete } = await loader.importLibrary('places');
 
       // Create the search box and link it to the UI element.
       const input = document.getElementById('pac-input') as HTMLInputElement;
       const searchBox = new SearchBox(input);
 
-      map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+      // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
       // Bias the SearchBox results towards current map's viewport.
       map.addListener('bounds_changed', () => {
@@ -108,25 +109,6 @@ export default function Map() {
             },
           });
         }
-
-        try {
-          const response = await fetch('/api/route-optim.ts', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(request),
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            console.log('Optimized tours:', data);
-          } else {
-            console.error('Failed to optimize tours');
-          }
-        } catch (error) {
-          console.error('Error optimizing tours:', error);
-        }
       });
     };
 
@@ -135,14 +117,16 @@ export default function Map() {
 
   return (
     <div>
-      <input
-        id="pac-input"
-        className="controls"
-        type="text"
-        placeholder="Search Box"
-      />
-      <div className="h-[520px] w-[600px]" ref={mapRef}>
+      <div className="h-[450px] w-[600px]" ref={mapRef}>
         Google Maps
+      </div>
+      <div className="px-2 py-3">
+        <input
+          id="pac-input"
+          className="w-full h-[50px] border border-gray-300 rounded-md placeholder:px-2"
+          type="text"
+          placeholder="Search locations"
+        />
       </div>
     </div>
   );
