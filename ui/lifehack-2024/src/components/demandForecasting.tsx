@@ -55,7 +55,7 @@ export default function DemandForecasting() {
       reader.onload = async (e) => {
         const text = e.target?.result;
         if (typeof text === 'string') {
-          // await uploadFileAndWaitForProcessing(file);
+          await uploadFileAndWaitForProcessing(file);
           fetchProjectedData();
           await processCsvAndStoreData(text);
           setLoading(false); // Set loading to false once processing is done
@@ -73,7 +73,13 @@ export default function DemandForecasting() {
       console.log('Waiting for reply...');
       await delay(1000);
       const response = await axios.get(
-        'https://8h09twey46.execute-api.ap-southeast-1.amazonaws.com/dev'
+        'https://8h09twey46.execute-api.ap-southeast-1.amazonaws.com/dev',
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+        }
       );
       const responseData = response.data;
       if (
@@ -103,6 +109,7 @@ export default function DemandForecasting() {
           {
             headers: {
               'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
             },
           }
         );
