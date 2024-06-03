@@ -29,12 +29,8 @@ In today's fast-paced market, businesses need real-time insights to stay ahead. 
 ## Usage
 
 ### Demand Dashboard Usage
-<<<<<<< HEAD
 
-- Upload a CSV file with 2 header columns date, and units_sold, a sample CSV file is provided at data/milk_consumption.csv
-=======
 - Upload a CSV file with 2 header columns date, and units_sold, a sample CSV file is provided milk_consumption.csv. Retraining the model takes about 3 minutes, after which the graph will update itself
->>>>>>> 5f8d8b11391ca439c622f747918bd5f4caa8bc68
 
 ### Inventory Management Usage
 
